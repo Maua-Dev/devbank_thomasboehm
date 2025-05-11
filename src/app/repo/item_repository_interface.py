@@ -5,7 +5,7 @@ from ..enums.item_type_enum import ItemTypeEnum
 
 from ..entities.item import Item
 
-
+# CLASS EXMAPLE
 class IItemRepository(ABC):
     
     
