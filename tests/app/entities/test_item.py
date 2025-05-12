@@ -53,3 +53,5 @@ class Test_Item:
     def test_item_admin_permission_is_not_bool(self):
         with pytest.raises(ParamNotValidated):
             Item(name="test", price=1.0, item_type=ItemTypeEnum.FOOD, admin_permission="True")
+
+

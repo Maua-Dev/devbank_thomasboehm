@@ -5,7 +5,8 @@ from ..enums.item_type_enum import ItemTypeEnum
 
 from ..entities.item import Item
 
-from ..entities.item import User
+
+
 # CLASS EXMAPLE
 class IItemRepository(ABC):
     
@@ -48,30 +49,3 @@ class IItemRepository(ABC):
         pass
     
 
-#CLASS USER
-
-class UserRepository(ABC):
-    @abstractmethod
-    def get_user(self, user_id: str) -> Optional[User]:
-        '''
-        Returns the user with the given id.
-        If the user does not exist, returns None
-        '''
-        pass
-
-
-class TransactionRepository(ABC):
-    @abstractmethod
-    def update_current_balance(self, current_balance: float, transaction_type: str, value: float) -> dict[float, float]:
-        '''
-        Updates the current balance of the user;
-        adds the transaction to the transaction records;
-        returns the new balance and the execution time in milliseconds.
-        '''
-        pass
-    @abstractmethod
-    def get_transactions(self) -> List[dict]:
-        '''
-        Returns a list of all transaction records
-        '''
-        pass
