@@ -97,11 +97,13 @@ class Item:
 
 #CLASS USER
 
-class user:
+class User:
     name: str
     agency: str
     account: str
     current_balance: float
+    
+
     def __init__ (self, name: str=None, agency: str=None, account: str=None, current_balance: float=None):
         validate_name = self.validate_name(name)
         if validate_name[0] is False:
@@ -161,132 +163,101 @@ class user:
             return (False, "Current balance must be a float")
         if current_balance < 0:
             return (False, "Current balance must be a positive number")
-        return (True, "")    
+        return (True, "")  
 
+    
     def to_dict(self):
         return {
             "name": self.name,
             "agency": self.agency,
             "account": self.account,
-            "current_balance": self.current_balance
+            "current_balance": self.current_balance,
         }
+
     def __eq__(self,other):
         return self.name == other.name and self.agency == other.agency and self.account == other.account and self.current_balance == other.current_balance
     
     def __repr__(self):
-        return f"Item(name={self.name}, agency={self.agency}, account={self.account}, current_balance={self.current_balance})"
+        return f"User(name={self.name}, agency={self.agency}, account={self.account}, current_balance={self.current_balance})"
 
 
-#CLASS TRANSACTION
 
-class transaction:
-    qty_2: int
-    qty_5: int
-    qty_10: int
-    qty_20: int
-    qty_50: int
-    qty_100: int
-    qty_200: int
 
-    def __init__(self, qty_2: int=None, qty_5: int=None, qty_10: int=None, qty_20: int=None, qty_50: int=None, qty_100: int=None, qty_200: int=None):
-        validate_quantity_2 = self.validate_quantity_2(qty_2)
-        if validate_quantity_2[0] is False:
-            raise ParamNotValidated(qty_2,validate_quantity_2[1])
-        self.qty_2 = qty_2
+class Transaction:
+        current_balance: float
+        timestamp: float
+        Transaction_type: str
+        value: float
 
-        validate_quantity_5 = self.validate_quantity_5(qty_5)
-        if validate_quantity_5[0] is False:
-            raise ParamNotValidated(qty_5,validate_quantity_5[1])
+        def __init__ (self, current_balance: float=None, timestamp: float=None, Transaction_type: str=None, value: float=None):
+            validate_current_balance = self.validate_current_balance(current_balance)
+            if validate_current_balance[0] is False:
+             raise ParamNotValidated(current_balance, validate_current_balance[1])
+            self.current_balance = current_balance
 
-        validate_quantity_10 = self.validate_quantity_10(qty_10)
-        if validate_quantity_10[0] is False:
-            raise ParamNotValidated(qty_10,validate_quantity_10[1])
+            validate_timestamp = self.validate_timestamp(timestamp)
+            if validate_timestamp[0] is False:
+                raise ParamNotValidated(timestamp, validate_timestamp[1])
+            self.timestamp = timestamp
 
-        validate_quantity_20 = self.validate_quantity_20(qty_20)
-        if validate_quantity_20[0] is False:
-            raise ParamNotValidated(qty_20,validate_quantity_20[1])
+            validate_Transaction_type = self.validate_Transaction_type(Transaction_type)
+            if validate_Transaction_type[0] is False:
+                raise ParamNotValidated(Transaction_type, validate_Transaction_type[1])
+            self.Transaction_type = Transaction_type
 
-        validate_quantity_50 = self.validate_quantity_50(qty_50)
-        if validate_quantity_50[0] is False:
-            raise ParamNotValidated(qty_50,validate_quantity_50[1])
+            validate_value = self.validate_value(value)
+            if validate_value[0] is False:
+                raise ParamNotValidated(value, validate_value[1])
+            self.value = value
 
-        validate_quantity_100 = self.validate_quantity_100(qty_100)
-        if validate_quantity_100[0] is False:
-            raise ParamNotValidated(qty_100,validate_quantity_100[1])
+        @staticmethod    
+        def validate_current_balance(current_balance: float) -> Tuple[bool, str]:
+            if current_balance is None:
+                return (False, "Current balance is required")
+            if type(current_balance) != float:
+                 return (False, "Current balance must be a float")
+            if current_balance < 0:
+                 return (False, "Current balance must be a positive number")
+            return (True, "")  
 
-        validate_quantity_200 = self.validate_quantity_200(qty_200)
-        if validate_quantity_200[0] is False:
-            raise ParamNotValidated(qty_200,validate_quantity_200[1])
+        @staticmethod
+        def validate_timestamp(timestamp: float) -> Tuple[bool, str]:
+            if timestamp is None:
+                return (False, "Timestamp is required")
+            if type(timestamp) != float:
+                return (False, "Timestamp must be a float")
+            return (True, "")  
 
-    @staticmethod
-    def validate_quantity_2(qty_2: int) -> Tuple[bool, str]:
-        if qty_2 < 0:
-            return (False, "2 reais quantity must be a positive number")
-        if type(qty_2) != int:
-            return (False, "2 reais quantity must be an integer")
-        return (True, "")
+        @staticmethod
+        def validate_Transaction_type(Transaction_type: str) -> Tuple[bool, str]:
+            if Transaction_type is None:
+                return (False, "Type is required")
+            if Transaction_type.lower() not in ["withdraw", "deposit"]:
+                return (False, "Type must be 'withdraw' or 'deposit'")
+            if type(Transaction_type) != str:
+                return (False, "Type must be a string")
+            return (True, "")
+    
+        @staticmethod
+        def validate_value(value: float) -> Tuple[bool, str]:
+            if value is None:
+                return (False, "Value is required")
+            if type(value) != float:
+                return (False, "Value must be a float")
+            if value < 0:
+                return (False, "Value must be a positive number")
+            return (True, "")
+        
+        def to_dict(self):
+            return {
+                "value": self.value,
+                "Transaction_type": self.Transaction_type,
+                "current_balance": self.current_balance,
+                "timestamp": self.timestamp,
+            }
 
-    @staticmethod
-    def validate_quantity_5(qty_5: int) -> Tuple[bool, str]:
-        if qty_5 < 0:
-            return (False, "5 reais quantity must be a positive number")
-        if type(qty_5) != int:
-            return (False, "5 reais quantity must be an integer")
-        return (True, "")
+        def __eq__(self, other):
+            return self.current_balance == other.current_balance and self.timestamp == other.timestamp and self.Transaction_type == other.Transaction_type and self.value == other.value
 
-    @staticmethod
-    def validate_quantity_10(qty_10: int) -> Tuple[bool, str]:
-        if qty_10 < 0:
-            return (False, "10 reais quantity must be a positive number")
-        if type(qty_10) != int:
-            return (False, "10 reais quantity must be an integer")
-        return (True, "")
-
-    @staticmethod
-    def validate_quantity_20(qty_20: int) -> Tuple[bool, str]:
-        if qty_20 < 0:
-            return (False, "20 reais quantity must be a positive number")
-        if type(qty_20) != int:
-            return (False, "20 reais quantity must be an integer")
-        return (True, "")
-
-    @staticmethod
-    def validate_quantity_50(qty_50: int) -> Tuple[bool, str]:
-        if qty_50 < 0:
-            return (False, "50 reais quantity must be a positive number")
-        if type(qty_50) != int:
-            return (False, "50 reais quantity must be an integer")
-        return (True, "")
-
-    @staticmethod
-    def validate_quantity_100(qty_100: int) -> Tuple[bool, str]:
-        if qty_100 < 0:
-            return (False, "100 reais quantity must be a positive number")
-        if type(qty_100) != int:
-            return (False, "100 reais quantity must be an integer")
-        return (True, "")
-
-    @staticmethod
-    def validate_quantity_200(qty_200: int) -> Tuple[bool, str]:
-        if qty_200 < 0:
-            return (False, "200 reais quantity must be a positive number")
-        if type(qty_200) != int:
-            return (False, "200 reais quantity must be an integer")
-        return (True, "")
-
-def to_dict(self):
-        return {
-            "2": self.qty_2,
-            "5": self.qty_5,
-            "10": self.qty_10,
-            "20": self.qty_20,
-            "50": self.qty_50,
-            "100": self.qty_100,
-            "200": self.qty_200
-        }
-
-def __eq__(self,other):
-        return self.qty_2 == other.qty_2 and self.qty_5 == other.qty_5 and self.qty_10 == other.qty_10 and self.qty_20 == other.qty_20 and self.qty_50 == other.qty_50 and self.qty_100 == other.qty_100 and self.qty_200 == other.qty_200
-def __repr__(self):
-        return f"Item(2={self.qty_2}, 5={self.qty_5}, 10={self.qty_10}, 20={self.qty_20}, 50={self.qty_50}, 100={self.qty_100}, 200={self.qty_200})"
-
+        def __repr__(self):
+            return f"Transaction(current_balance={self.current_balance}, timestamp={self.timestamp}, Transaction_type={self.Transaction_type}, value={self.value})"

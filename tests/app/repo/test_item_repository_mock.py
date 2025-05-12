@@ -1,7 +1,15 @@
+#IMPORT COMUM
 import pytest
+
+#IMPORT EXEMPLO
 from src.app.entities.item import Item
 from src.app.enums.item_type_enum import ItemTypeEnum
 from src.app.repo.item_repository_mock import ItemRepositoryMock
+
+#IMPORT PRÁTICO
+from src.app.entities.item import User, Transaction
+from src.app.enums.item_type_enum import TransactionTypeEnum
+from src.app.repo.item_repository_mock import UserRepositoryMock, TransactionRepositoryMock
 
 class Test_ItemRepositoryMock:
     def test_get_all_items(self):
@@ -65,3 +73,69 @@ class Test_ItemRepositoryMock:
         
         assert item_updated.price == price
         assert repo.items.get(1).price == price
+
+
+class Test_TransactionRepositoryMock:
+
+
+    def test_transaction_repository():
+        # Setup
+        user_repo = UserRepositoryMock()
+        transaction_repo = TransactionRepositoryMock(user_repo)
+
+        # Criar usuário
+        user = User(name="Vitor Soller", agency="0000", account="00000-0", current_balance=0.0)
+        created_user = user_repo.create_user(user)
+
+        user_id = 1  # primeiro usuário criado
+
+        # Testar depósito
+        deposit_result = transaction_repo.update_current_balance(user_id, TransactionTypeEnum.DEPOSIT, 1000.0)
+        assert deposit_result["current_balance"] == 1000.0
+        assert "timestamp" in deposit_result
+
+        # Testar saque
+        withdraw_result = transaction_repo.update_current_balance(user_id, TransactionTypeEnum.WITHDRAW, 200.0)
+        assert withdraw_result["current_balance"] == 800.0
+        assert "timestamp" in withdraw_result
+
+        # Testar histórico
+        history = transaction_repo.get_transactions()
+        assert len(history) == 2
+
+        # Verificar conteúdo do histórico
+        assert history[0]["transaction_type"] == "deposit"
+        assert history[0]["value"] == 1000.0
+        assert history[0]["current_balance"] == 1000.0
+
+        assert history[1]["transaction_type"] == "withdraw"
+        assert history[1]["value"] == 200.0
+        assert history[1]["current_balance"] == 800.0
+
+
+class Test_UserRepositoryMock:
+    
+    @pytest.fixture
+    def user_repo():
+        return UserRepositoryMock()
+
+    def test_create_user(user_repo):
+        user = User(name="Vitor Soller", agency="0000", account="00000-0", current_balance=1000.0)
+        created_user = user_repo.create_user(user)
+
+        assert created_user == user
+        assert created_user.name == "Vitor Soller"
+        assert created_user.current_balance == 1000.0
+
+    def test_get_existing_user(user_repo):
+        user = User(name="Maria", agency="1111", account="12345-6", current_balance=500.0)
+        user_repo.create_user(user)
+        retrieved_user = user_repo.get_user(1)  # o primeiro inserido será id 1
+
+        assert retrieved_user is not None
+        assert retrieved_user.name == "Maria"
+        assert retrieved_user.account == "12345-6"
+
+    def test_get_nonexistent_user(user_repo):
+        result = user_repo.get_user(999)
+        assert result is None
