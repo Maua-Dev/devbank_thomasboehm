@@ -37,7 +37,7 @@ class Environments:
         self.stage = STAGE[os.environ.get("STAGE")]
 
     @staticmethod
-    def get_user_repo() -> IItemRepository:
+    def get_user_repo() -> UserRepository:
         if Environments.get_envs().stage == STAGE.TEST:
             from .repo.user_repository_mock import UserRepositoryMock
             return UserRepositoryMock
