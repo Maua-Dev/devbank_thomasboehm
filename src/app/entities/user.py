@@ -9,7 +9,12 @@ class User:
     current_balance: float
     
 
-    def __init__ (self, name: str=None, agency: str=None, account: str=None, current_balance: float=None):
+    def __init__ (self, name: str=None, agency: str=None, account: str=None, current_balance: float=None, user_id: int=None):
+        validate_user_id = self.validate_user_id(user_id)
+        if validate_user_id[0] is False:
+            raise ParamNotValidated(user_id, validate_user_id[1])
+        self.user_id = user_id
+
         validate_name = self.validate_name(name)
         if validate_name[0] is False:
             raise ParamNotValidated(name, validate_name[1])
@@ -29,6 +34,19 @@ class User:
         if validate_current_balance[0] is False:
             raise ParamNotValidated(current_balance, validate_current_balance[1])
         self.current_balance = current_balance
+
+    @staticmethod
+    def validate_user_id(user_id: str) -> Tuple[bool, str]:
+        if user_id is None:
+            return (False, "Missing 'user_id' parameter")
+
+        if type(user_id) != int:
+            return (False, "Parameter 'user_id' must be an integer")
+
+        if user_id < 0:
+            return (False, "Parameter 'user_id' must be a positive integer")
+
+        return (True, "")
 
     @staticmethod
     def validate_name(name: str) -> Tuple[bool, str]:

@@ -3,93 +3,20 @@ from mangum import Mangum
 
 from .environments import Environments
 
-from .repo.item_repository_mock import ItemRepositoryMock
 from .repo.user_repository_mock import UserRepositoryMock
+from .repo.transaction_repository_mock import TransactionRepositoryMock
+
 from .errors.entity_errors import ParamNotValidated
 
 from .enums.item_type_enum import ItemTypeEnum
 
-from .entities.item import Item
 from .entities.user import User
+from .entities.transaction import Transaction
+
 
 app = FastAPI()
 
-user_repo = Environments.get_user_repo()()
-transaction_repo = Environments.get_transaction_repo()(user_repo)
-
-in_use_user_id = 1
-factor = 2
-
-@app.get("/")
-def get_user(user_id: int):
-    user = user_repo.get_user(user_id=in_use_user_id)
-
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    return user.to_dict()
-
-@app.get("/history")
-def get_history():
-    history = transaction_repo.get_transactions()
-    if history is None:
-        return None
-    else:
-        return transaction_repo.all_transactions
-
-
-@app.post("/deposit")
-def deposit(request: dict):
-    model = {
-        "2":0,
-        "5":0,
-        "10":0,
-        "20":0,
-        "50":0,
-        "100":0,
-        "200":0
-    }
-    
-    transaction_value = 0.0
-    
-    for key in request:
-        if model.get(key, None) is not None:
-            transaction_value += int(key) * float(request[key])
-
-    user = user_repo.get_user(user_id=in_use_user_id)
-
-    if transaction_value >= user.current_balance * factor:
-        raise HTTPException(status_code=403, detail="Depósito Suspeito")
-    response = transaction_repo.update_current_balance(user_id=in_use_user_id, transaction_type="DEPOSIT", value=transaction_value)
-    return response
-
-@app.post("/withdraw")
-def withdraw(request: dict):
-    model = {
-        "2":0,
-        "5":0,
-        "10":0,
-        "20":0,
-        "50":0,
-        "100":0,
-        "200":0
-    }
-    
-    transaction_value = 0.0
-    
-    for key in request:
-        if model.get(key, None) is not None:
-            transaction_value += int(key) * float(request[key])
-
-    user = user_repo.get_user(user_id=in_use_user_id)
-
-    if transaction_value > user.current_balance:
-        raise HTTPException(status_code=403, detail="Saldo insuficiente para transação")
-    response = transaction_repo.update_current_balance(user_id=in_use_user_id, transaction_type="WITHDRAW", value=transaction_value)
-    return response
-
-
-#EXAMPLE
+repo = Environments.get_item_repo()()
 
 @app.get("/items/get_all_items")
 def get_all_items():

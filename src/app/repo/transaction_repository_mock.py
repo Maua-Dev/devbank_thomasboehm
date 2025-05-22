@@ -13,13 +13,13 @@ class TransactionRepositoryMock(TransactionRepository):
 
     all_transactions: List[Transaction]
 
-    def __init__(self, user_repo: UserRepositoryMock):
-        self.user_repo = user_repo
+    def __init__(self, transaction_repo: UserRepositoryMock):
+        self.transaction_repo = transaction_repo
         self.all_transactions = []
 
 
     def update_current_balance(self, user_id: int, transaction_type: TransactionTypeEnum, value: float) -> dict:
-        user = self.user_repo.get_user(user_id)
+        user = self.transaction_repo.get_user(user_id)
         start = time.time()
         if user is None:
             return None
