@@ -17,8 +17,10 @@ class UserRepositoryMock(UserRepository):
 
     def create_user(self, user: User) -> User:
         user_id = len(self.users) + 1
+        user.id = user_id  # <-- atribui o ID ao objeto User
         self.users[user_id] = user
         return user
+
 
     def get_user(self, user_id: int) -> Optional[User]:
         return self.users.get(user_id)

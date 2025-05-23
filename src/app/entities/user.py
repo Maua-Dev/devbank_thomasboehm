@@ -10,9 +10,7 @@ class User:
     
 
     def __init__ (self, name: str=None, agency: str=None, account: str=None, current_balance: float=None, user_id: int=None):
-        validate_user_id = self.validate_user_id(user_id)
-        if validate_user_id[0] is False:
-            raise ParamNotValidated(user_id, validate_user_id[1])
+
         self.user_id = user_id
 
         validate_name = self.validate_name(name)

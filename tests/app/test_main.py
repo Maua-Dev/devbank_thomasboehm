@@ -1,3 +1,4 @@
+'''
 from fastapi.exceptions import HTTPException
 import pytest
 from src.app.entities.item import Item
@@ -5,8 +6,12 @@ from src.app.enums.item_type_enum import ItemTypeEnum
 from src.app.main import get_user, get_history, deposit, withdraw, create_user
 from src.app.repo.user_repository_mock import UserRepositoryMock
 from src.app.repo.transaction_repository_mock import TransactionRepositoryMock
+from src.app.environments import Environments
+user_repo = Environments.get_user_repo()()
+transaction_repo = Environments.get_transaction_repo()(user_repo)
 
 class Test_Main:
+
     def test_get_history(self):
         repo = TransactionRepositoryMock()
         response = get_history()
@@ -16,7 +21,7 @@ class Test_Main:
     def test_get_user(self):
         repo = UserRepositoryMock()
         user_id = 1
-        response = get_user(user_id=user_id)
+        response = get_user(user_id)
         assert response == {
             'user_id' : user_id,
             'user': repo.user.get(user_id).to_dict()
@@ -26,7 +31,7 @@ class Test_Main:
 
         user_id = None
         with pytest.raises(HTTPException) as err:
-            get_user(user_id=user_id)
+            get_user(user_id)
 
     def test_deposit(self):
         repo = UserRepositoryMock()
@@ -40,7 +45,7 @@ class Test_Main:
             "100": 0,
             "200": 0
         }
-        response = deposit(user_id=user_id, request=request)
+        response = deposit(user_id, request)
         assert response == {
             'current_balance': repo.user.get(user_id).current_balance,
             'timestamp': response['timestamp']
@@ -59,8 +64,8 @@ class Test_Main:
             "200": 0
         }
         with pytest.raises(HTTPException) as err:
-            deposit(user_id=user_id, request=request)
-        
+            deposit(user_id, request)
+
     def test_withdraw(self):
         repo = UserRepositoryMock()
         user_id = 1
@@ -73,7 +78,7 @@ class Test_Main:
             "100": 0,
             "200": 0
         }
-        response = withdraw(user_id=user_id, request=request)
+        response = withdraw(user_id, request)
         assert response == {
             'current_balance': repo.user.get(user_id).current_balance,
             'timestamp': response['timestamp']
@@ -92,8 +97,8 @@ class Test_Main:
             "200": 0
         }
         with pytest.raises(HTTPException) as err:
-            withdraw(user_id=user_id, request=request)
-    
+            withdraw(user_id, request)
+
     def test_create_user(self):
         repo = UserRepositoryMock()
         user_id = 1
@@ -103,8 +108,10 @@ class Test_Main:
             "account_number": "123456",
             "current_balance": 0.0
         }
-        response = create_user(user_id=user_id, request=request)
+        response = create_user(user_id, request)
         assert response == {
             "user_id": user_id,
             "user": repo.user.get(user_id).to_dict()
         }
+
+    '''

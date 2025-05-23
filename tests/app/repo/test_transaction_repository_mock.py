@@ -50,8 +50,9 @@ class Test_TransactionRepositoryMock:
         transaction_repo = TransactionRepositoryMock(user_repo=user_repo)
         transaction_type = TransactionTypeEnum.DEPOSIT
         value = 100.0
-        
-        result = transaction_repo.update_current_balance(user_id=999, transaction_type=transaction_type, value=value)
+        in_use_user_id = 999
+        # Simulate a user not found scenario
+        result = transaction_repo.update_current_balance(user_id=in_use_user_id, transaction_type=transaction_type, value=value)
         
         assert result is None
     
