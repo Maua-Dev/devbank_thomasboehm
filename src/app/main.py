@@ -12,9 +12,10 @@ transaction_repo = Environments.get_transaction_repo()(user_repo)
 
 in_use_user_id = 1
 factor = 2
-
+user = User(name={"Vitor Soller"}, agency={'0000'}, account={'00000-0'}, current_balance={1000.0})
+user_repo.create_user(user)
 @app.get("/")
-def get_user():
+def get_user(in_use_user_id: int = in_use_user_id):
     user = user_repo.get_user(user_id=in_use_user_id)
 
     if user is None:
